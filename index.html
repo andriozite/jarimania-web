@@ -459,19 +459,6 @@
             background: #7c3aed;
         }
 
-        .btn-absen.hadir {
-            background: #059669;
-        }
-        .btn-absen.izin {
-            background: #f59e0b;
-        }
-        .btn-absen.sakit {
-            background: #ec4899;
-        }
-        .btn-absen.alpa {
-            background: #ef4444;
-        }
-
         /* ============================================================
            MODAL
            ============================================================ */
@@ -609,6 +596,14 @@
             margin: 10px 0;
         }
 
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         /* ============================================================
            RESPONSIVE
            ============================================================ */
@@ -637,8 +632,7 @@
                 padding: 6px 4px;
             }
             .btn-edit,
-            .btn-hapus,
-            .btn-absen {
+            .btn-hapus {
                 padding: 2px 8px;
                 font-size: 0.7rem;
             }
@@ -763,14 +757,6 @@
             margin-bottom: 10px;
         }
 
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
         .total-row {
             background: #f1f5f9;
             font-weight: 700;
@@ -848,9 +834,30 @@
             </div>
 
             <!-- ==========================================================
-            TAB 1: SISWA
+            TAB 1: SISWA (ADA TOMBOL TAMBAH!)
             ========================================================== -->
             <div id="tabSiswa" class="tab-content active">
+
+                <!-- FORM TAMBAH SISWA -->
+                <div class="section-title">
+                    ➕ Tambah Siswa Baru
+                </div>
+                <div class="form-grid">
+                    <input type="text" id="inputNama" placeholder="Nama siswa" />
+                    <input type="text" id="inputKelas" placeholder="Kelas (ex: 6 SD)" />
+                    <select id="inputMapel">
+                        <option value="Matematika">Matematika</option>
+                        <option value="IPA">IPA</option>
+                        <option value="Bahasa Inggris">Bahasa Inggris</option>
+                        <option value="Calistung">Calistung</option>
+                    </select>
+                    <select id="inputStatus">
+                        <option value="Aktif">Aktif</option>
+                        <option value="Lunas">Lunas</option>
+                        <option value="Tugas Terlambat">Tugas Terlambat</option>
+                    </select>
+                    <button class="btn btn-success" id="tambahBtn" onclick="tambahSiswa()">➕ Tambah Siswa</button>
+                </div>
 
                 <div class="flex-between">
                     <div class="section-title">
@@ -1172,6 +1179,7 @@
                         <td>
                             <button class="btn-edit" onclick="bukaEdit('${siswa.id}')">✏️</button>
                             <button class="btn-hapus" onclick="hapusSiswa('${siswa.id}')">🗑️</button>
+                            <button class="btn-absen" onclick="bukaAbsensi('${siswa.id}')">✅ Absen</button>
                         </td>
                     </tr>
                 `;
@@ -1269,8 +1277,9 @@
             tbody.innerHTML = html;
 
             // Update total hadir hari ini
-            const hadirHariIni = filtered.filter(item =>
-                item.status === 'Hadir' && item.tanggal === new Date().toISOString().split('T')[0]
+            const today = new Date().toISOString().split('T')[0];
+            const hadirHariIni = absenData.filter(item =>
+                item.status === 'Hadir' && item.tanggal === today
             ).length;
             document.getElementById('totalHadir').textContent = hadirHariIni;
         }
@@ -1281,12 +1290,10 @@
         function updateStats() {
             document.getElementById('totalSiswa').textContent = siswaData.length || 0;
 
-            // Total pemasukan dari finance
             let total = 0;
             financeData.forEach(item => { total += parseInt(item.nominal) || 0; });
             document.getElementById('totalPemasukan').textContent = 'Rp ' + formatRupiah(total);
 
-            // Total hadir hari ini
             const today = new Date().toISOString().split('T')[0];
             const hadirHariIni = absenData.filter(item =>
                 item.status === 'Hadir' && item.tanggal === today
@@ -1478,12 +1485,12 @@
                 document.getElementById('inputKelas').value = '';
                 isSaving = false;
                 btn.disabled = false;
-                btn.textContent = '➕ Tambah';
+                btn.textContent = '➕ Tambah Siswa';
             }).catch(() => {
                 showToast('❌ Gagal menambahkan siswa!', 'error');
                 isSaving = false;
                 btn.disabled = false;
-                btn.textContent = '➕ Tambah';
+                btn.textContent = '➕ Tambah Siswa';
             });
         }
 
@@ -1661,7 +1668,6 @@
                 sessionStorage.setItem('jarimania_logged_in', 'true');
                 document.getElementById('loadingIndicator').style.display = 'block';
 
-                // Set tanggal default untuk absensi
                 document.getElementById('absenTanggal').value = new Date().toISOString().split('T')[0];
 
                 loadData();
@@ -1777,6 +1783,7 @@
 
         console.log('🚀 Les Jarimania v2.0 siap!');
         console.log('💰 Finance, ✅ Absensi, 📊 Export Excel');
+        console.log('👨‍🎓 Tambah Siswa di tab SISWA!');
     </script>
 
 </body>

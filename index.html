@@ -11,6 +11,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
     </script>
 
+    <!-- SheetJS (XLSX) untuk Export Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js">
+    </script>
+
     <style>
         /* ============================================================
            RESET & GLOBAL
@@ -32,9 +36,8 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
-            margin: auto;
             background: white;
             border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
@@ -119,17 +122,16 @@
         }
 
         .btn {
-            width: 100%;
-            padding: 14px;
+            padding: 12px 24px;
             background: #4f46e5;
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            margin-top: 20px;
             transition: 0.2s;
+            display: inline-block;
         }
 
         .btn:hover {
@@ -138,14 +140,50 @@
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
-
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none !important;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            background: #059669;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 2px solid #4f46e5;
+        }
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-full {
+            width: 100%;
         }
 
         .login-error {
@@ -199,14 +237,59 @@
             margin-top: 4px;
         }
 
-        /* Form Tambah */
+        /* ============================================================
+           TAB MENU
+           ============================================================ */
+        .tab-menu {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .tab-menu .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .tab-menu .tab-btn:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .tab-menu .tab-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ============================================================
+           FORM
+           ============================================================ */
         .section-title {
             color: #1e293b;
-            margin: 25px 0 12px 0;
+            margin: 20px 0 12px 0;
             font-size: 1.2rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .section-title .badge-count {
@@ -218,7 +301,7 @@
             font-weight: 600;
         }
 
-        .form-tambah {
+        .form-grid {
             background: #f8fafc;
             padding: 20px;
             border-radius: 16px;
@@ -229,8 +312,8 @@
             align-items: end;
         }
 
-        .form-tambah input,
-        .form-tambah select {
+        .form-grid input,
+        .form-grid select {
             padding: 10px 14px;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
@@ -240,14 +323,14 @@
             transition: 0.2s;
         }
 
-        .form-tambah input:focus,
-        .form-tambah select:focus {
+        .form-grid input:focus,
+        .form-grid select:focus {
             border-color: #4f46e5;
             outline: none;
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
 
-        .form-tambah .btn {
+        .form-grid .btn {
             margin-top: 0;
             padding: 10px 20px;
         }
@@ -266,43 +349,65 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         th {
             background: #4f46e5;
             color: white;
-            padding: 14px 12px;
+            padding: 12px 10px;
             text-align: left;
             white-space: nowrap;
+            position: sticky;
+            top: 0;
         }
 
         td {
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
         }
 
         tr:hover td {
             background: #f1f5f9;
         }
 
-        /* Badge Status */
+        /* ============================================================
+           BADGE
+           ============================================================ */
         .badge {
-            background: #dbeafe;
-            color: #1e40af;
             padding: 4px 14px;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             display: inline-block;
         }
 
+        .badge-aktif {
+            background: #dbeafe;
+            color: #1e40af;
+        }
         .badge-lunas {
             background: #dcfce7;
             color: #166534;
         }
-
         .badge-terlambat {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        .badge-hadir {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .badge-izin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge-sakit {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+        .badge-alpa {
             background: #fef2f2;
             color: #991b1b;
         }
@@ -314,13 +419,13 @@
             background: #f59e0b;
             color: white;
             border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
+            padding: 4px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-right: 5px;
+            margin-right: 4px;
+            font-size: 0.8rem;
             transition: 0.2s;
         }
-
         .btn-edit:hover {
             background: #d97706;
         }
@@ -329,14 +434,42 @@
             background: #ef4444;
             color: white;
             border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
+            padding: 4px 12px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 0.8rem;
             transition: 0.2s;
         }
-
         .btn-hapus:hover {
             background: #dc2626;
+        }
+
+        .btn-absen {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-right: 3px;
+            transition: 0.2s;
+        }
+        .btn-absen:hover {
+            background: #7c3aed;
+        }
+
+        .btn-absen.hadir {
+            background: #059669;
+        }
+        .btn-absen.izin {
+            background: #f59e0b;
+        }
+        .btn-absen.sakit {
+            background: #ec4899;
+        }
+        .btn-absen.alpa {
+            background: #ef4444;
         }
 
         /* ============================================================
@@ -360,9 +493,11 @@
             background: white;
             padding: 30px;
             border-radius: 20px;
-            max-width: 450px;
+            max-width: 500px;
             width: 100%;
             animation: modalIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes modalIn {
@@ -379,9 +514,6 @@
         .modal-content h2 {
             margin-bottom: 20px;
             color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .modal-content label {
@@ -416,9 +548,19 @@
             background: #94a3b8;
             margin-top: 8px;
         }
-
         .modal-content .btn-batal:hover {
             background: #64748b;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .modal-footer .btn {
+            flex: 1;
+            min-width: 100px;
         }
 
         /* ============================================================
@@ -460,6 +602,13 @@
             transform: scale(1.03);
         }
 
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
         /* ============================================================
            RESPONSIVE
            ============================================================ */
@@ -468,45 +617,48 @@
                 padding: 15px;
                 border-radius: 20px;
             }
-
             .header h1 {
                 font-size: 1.5rem;
             }
-
             .stats {
                 grid-template-columns: 1fr 1fr;
             }
-
-            .form-tambah {
+            .form-grid {
                 grid-template-columns: 1fr;
             }
-
-            .form-tambah .btn {
+            .form-grid .btn {
                 width: 100%;
             }
-
             table {
-                font-size: 0.85rem;
+                font-size: 0.75rem;
             }
-
             th,
             td {
-                padding: 8px 6px;
+                padding: 6px 4px;
             }
-
             .btn-edit,
-            .btn-hapus {
-                padding: 4px 10px;
-                font-size: 0.8rem;
+            .btn-hapus,
+            .btn-absen {
+                padding: 2px 8px;
+                font-size: 0.7rem;
             }
-
             .modal-content {
                 padding: 20px;
                 margin: 10px;
             }
-
             .logout-area {
                 flex-direction: column;
+                text-align: center;
+            }
+            .tab-menu .tab-btn {
+                padding: 6px 14px;
+                font-size: 0.8rem;
+            }
+            .toolbar {
+                flex-direction: column;
+            }
+            .toolbar .btn {
+                width: 100%;
                 text-align: center;
             }
         }
@@ -515,15 +667,12 @@
             .stats {
                 grid-template-columns: 1fr;
             }
-
             .header h1 {
                 font-size: 1.2rem;
             }
-
             #loginSection {
                 padding: 20px;
             }
-
             .section-title {
                 font-size: 1rem;
             }
@@ -562,15 +711,12 @@
             transform: translateY(0);
             opacity: 1;
         }
-
         .toast.success {
             background: #059669;
         }
-
         .toast.error {
             background: #dc2626;
         }
-
         .toast.info {
             background: #2563eb;
         }
@@ -600,6 +746,38 @@
                 transform: rotate(360deg);
             }
         }
+
+        .text-muted {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-10 {
+            margin-top: 10px;
+        }
+        .mb-10 {
+            margin-bottom: 10px;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .total-row {
+            background: #f1f5f9;
+            font-weight: 700;
+        }
+        .total-row td {
+            border-top: 2px solid #4f46e5;
+        }
     </style>
 </head>
 <body>
@@ -611,7 +789,7 @@
         ============================================================ -->
         <div class="header">
             <h1>📚 Les <span>Jarimania</span></h1>
-            <p class="subtitle">Portal Manajemen Siswa</p>
+            <p class="subtitle">Manajemen Siswa • Keuangan • Absensi</p>
         </div>
 
         <!-- ============================================================
@@ -626,7 +804,7 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" placeholder="Masukkan password" />
 
-                <button type="submit" class="btn" id="loginBtn">🚀 Masuk</button>
+                <button type="submit" class="btn btn-full" id="loginBtn">🚀 Masuk</button>
                 <div id="loginError" class="login-error">❌ Username atau password salah!</div>
             </form>
         </div>
@@ -649,8 +827,12 @@
                     <div class="number" id="totalSiswa">0</div>
                 </div>
                 <div class="card">
-                    <h3>✅ Tugas Selesai</h3>
-                    <div class="number" id="totalTugas">0</div>
+                    <h3>💰 Total Pemasukan</h3>
+                    <div class="number" id="totalPemasukan">Rp0</div>
+                </div>
+                <div class="card">
+                    <h3>✅ Hadir Hari Ini</h3>
+                    <div class="number" id="totalHadir">0</div>
                 </div>
                 <div class="card">
                     <h3>📖 Mata Pelajaran</h3>
@@ -658,60 +840,157 @@
                 </div>
             </div>
 
-            <!-- FORM TAMBAH SISWA -->
-            <div class="section-title">
-                ➕ Tambah Siswa Baru
-                <span class="badge-count" id="siswaCount">0 siswa</span>
-            </div>
-            <div class="form-tambah">
-                <input type="text" id="inputNama" placeholder="Nama siswa" />
-                <input type="text" id="inputKelas" placeholder="Kelas (ex: 6 SD)" />
-                <select id="inputMapel">
-                    <option value="Matematika">Matematika</option>
-                    <option value="IPA">IPA</option>
-                    <option value="Bahasa Inggris">Bahasa Inggris</option>
-                    <option value="Calistung">Calistung</option>
-                </select>
-                <select id="inputStatus">
-                    <option value="Aktif">Aktif</option>
-                    <option value="Lunas">Lunas</option>
-                    <option value="Tugas Terlambat">Tugas Terlambat</option>
-                </select>
-                <button class="btn" id="tambahBtn" onclick="tambahSiswa()">➕ Tambah</button>
+            <!-- TAB MENU -->
+            <div class="tab-menu">
+                <button class="tab-btn active" data-tab="tabSiswa">📋 Siswa</button>
+                <button class="tab-btn" data-tab="tabFinance">💰 Keuangan</button>
+                <button class="tab-btn" data-tab="tabAbsensi">✅ Absensi</button>
             </div>
 
-            <!-- TABEL SISWA -->
-            <div class="section-title">
-                📋 Daftar Siswa
+            <!-- ==========================================================
+            TAB 1: SISWA
+            ========================================================== -->
+            <div id="tabSiswa" class="tab-content active">
+
+                <div class="flex-between">
+                    <div class="section-title">
+                        📋 Daftar Siswa
+                        <span class="badge-count" id="siswaCount">0 siswa</span>
+                    </div>
+                    <button class="btn btn-success btn-sm" onclick="exportExcel()">📊 Export Excel</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Kelas</th>
+                                <th>Mapel</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="siswaTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">
+                                    🔄 Memuat data...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Kelas</th>
-                            <th>Mapel</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="siswaTableBody">
-                        <tr>
-                            <td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">
-                                🔄 Memuat data...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- ==========================================================
+            TAB 2: KEUANGAN (FINANCE)
+            ========================================================== -->
+            <div id="tabFinance" class="tab-content">
+
+                <div class="section-title">
+                    💰 Manajemen Keuangan
+                    <span class="badge-count" id="financeCount">0 transaksi</span>
+                </div>
+
+                <!-- Form Tambah Pembayaran -->
+                <div class="form-grid">
+                    <select id="financeSiswa">
+                        <option value="">Pilih Siswa</option>
+                    </select>
+                    <input type="number" id="financeNominal" placeholder="Nominal (Rp)" />
+                    <select id="financeBulan">
+                        <option value="Januari">Januari</option>
+                        <option value="Februari">Februari</option>
+                        <option value="Maret">Maret</option>
+                        <option value="April">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Juni">Juni</option>
+                        <option value="Juli">Juli</option>
+                        <option value="Agustus">Agustus</option>
+                        <option value="September">September</option>
+                        <option value="Oktober">Oktober</option>
+                        <option value="November">November</option>
+                        <option value="Desember">Desember</option>
+                    </select>
+                    <select id="financeTahun">
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026" selected>2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                    <button class="btn btn-success" onclick="tambahPembayaran()">➕ Tambah</button>
+                </div>
+
+                <!-- Tabel Keuangan -->
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Siswa</th>
+                                <th>Bulan</th>
+                                <th>Tahun</th>
+                                <th>Nominal</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financeTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center;padding:30px;color:#94a3b8;">
+                                    📭 Belum ada transaksi
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+            TAB 3: ABSENSI
+            ========================================================== -->
+            <div id="tabAbsensi" class="tab-content">
+
+                <div class="section-title">
+                    ✅ Manajemen Absensi
+                    <span class="badge-count" id="absenCount">0 catatan</span>
+                </div>
+
+                <!-- Filter Tanggal -->
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                    <input type="date" id="absenTanggal" />
+                    <button class="btn btn-sm" onclick="loadAbsensi()">🔍 Tampilkan</button>
+                    <button class="btn btn-success btn-sm" onclick="exportAbsensiExcel()">📊 Export Excel</button>
+                </div>
+
+                <!-- Tabel Absensi -->
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Siswa</th>
+                                <th>Status</th>
+                                <th>Keterangan</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="absenTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">
+                                    📭 Belum ada data absensi
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- LOGOUT -->
             <div class="logout-area">
-                <span class="info-data">
-                    ☁️ Data tersimpan di <strong>Cloud</strong>
-                </span>
+                <span class="info-data">☁️ Data tersimpan di <strong>Cloud</strong></span>
                 <button class="btn-logout" onclick="logout()">🚪 Keluar</button>
             </div>
         </div>
@@ -720,13 +999,13 @@
         FOOTER
         ============================================================ -->
         <div class="footer-credit">
-            © 2026 Les Jarimania
+            © 2026 Andrian • Les Jarimania
         </div>
 
     </div>
 
     <!-- ============================================================
-    MODAL EDIT
+    MODAL EDIT SISWA
     ============================================================ -->
     <div class="modal" id="editModal">
         <div class="modal-content">
@@ -754,20 +1033,49 @@
                 <option value="Tugas Terlambat">Tugas Terlambat</option>
             </select>
 
-            <button class="btn" id="simpanEditBtn" onclick="simpanEdit()">💾 Simpan</button>
-            <button class="btn btn-batal" onclick="tutupModal()">❌ Batal</button>
+            <button class="btn btn-full" id="simpanEditBtn" onclick="simpanEdit()">💾 Simpan</button>
+            <button class="btn btn-full btn-batal" onclick="tutupModal()">❌ Batal</button>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- ============================================================
+    MODAL ABSENSI
+    ============================================================ -->
+    <div class="modal" id="absenModal">
+        <div class="modal-content">
+            <h2>✅ Absensi Siswa</h2>
+            <input type="hidden" id="absenSiswaId" />
+
+            <p><strong>Nama:</strong> <span id="absenSiswaNama"></span></p>
+            <p><strong>Tanggal:</strong> <span id="absenTanggalDisplay"></span></p>
+
+            <label for="absenStatus">Status</label>
+            <select id="absenStatus">
+                <option value="Hadir">✅ Hadir</option>
+                <option value="Izin">📝 Izin</option>
+                <option value="Sakit">🤒 Sakit</option>
+                <option value="Alpa">❌ Alpa</option>
+            </select>
+
+            <label for="absenKeterangan">Keterangan (Opsional)</label>
+            <input type="text" id="absenKeterangan" placeholder="Contoh: Terlambat 15 menit" />
+
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="simpanAbsensi()">💾 Simpan</button>
+                <button class="btn btn-batal" onclick="tutupModalAbsen()">❌ Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
     <div id="toast" class="toast"></div>
 
     <!-- ============================================================
-    SCRIPT - FIREBASE VERSION
+    SCRIPT
     ============================================================ -->
     <script>
         // ============================================================
-        // 🔥 KONFIGURASI FIREBASE - SUDAH DIISI!
+        // 1. FIREBASE CONFIG
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDTR-MimKKkqluysGZl8ll5IJRE-AbaNLU",
@@ -779,88 +1087,80 @@
             appId: "1:731016172554:web:ef5b0206b7c1ddd8347bf3"
         };
 
-        // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
         // ============================================================
-        // 🔐 KONFIGURASI LOGIN (ENCODE)
+        // 2. LOGIN CREDENTIAL
         // ============================================================
-        const ENCODED_USER = 'SkFSSU1BTklBQkVMQUpBUg==';
-        const ENCODED_PASS = 'UkFKSU5CRUxBSkFS';
-        const VALID_USER = atob(ENCODED_USER);
-        const VALID_PASS = atob(ENCODED_PASS);
+        const VALID_USER = atob('SkFSSU1BTklBQkVMQUpBUg==');
+        const VALID_PASS = atob('UkFKSU5CRUxBSkFS');
 
         // ============================================================
-        // 📋 VARIABLE GLOBAL
+        // 3. GLOBAL VARIABLE
         // ============================================================
         let siswaData = [];
+        let financeData = [];
+        let absenData = [];
         let editId = null;
         let isSaving = false;
+        let absenSiswaId = null;
 
         // ============================================================
-        // 💾 LOAD DATA DARI FIREBASE
+        // 4. LOAD DATA
         // ============================================================
         function loadData() {
-            const tbody = document.getElementById('siswaTableBody');
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;">
-                <div class="spinner"></div><br>⏳ Memuat data...
-            </td></tr>`;
-
-            const siswaRef = database.ref('siswa');
-
-            siswaRef.on('value', function(snapshot) {
+            // Load Siswa
+            database.ref('siswa').on('value', function(snapshot) {
                 const data = snapshot.val();
-
-                if (data) {
-                    siswaData = Object.keys(data).map(key => ({
-                        id: key,
-                        ...data[key]
-                    }));
-                    siswaData.sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
-                } else {
-                    siswaData = [];
-                }
-
-                renderTable();
+                siswaData = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+                siswaData.sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
+                renderSiswa();
+                updateFinanceSiswaDropdown();
+                updateStats();
                 document.getElementById('loadingIndicator').style.display = 'none';
                 document.getElementById('siswaCount').textContent = siswaData.length + ' siswa';
+            });
 
-            }, function(error) {
-                console.error('Error loading data:', error);
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:#dc2626;">
-                    ❌ Gagal memuat data. Cek koneksi internet!
-                </td></tr>`;
-                showToast('❌ Gagal memuat data!', 'error');
+            // Load Finance
+            database.ref('finance').on('value', function(snapshot) {
+                const data = snapshot.val();
+                financeData = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+                financeData.sort((a, b) => (b.tanggal || '').localeCompare(a.tanggal || ''));
+                renderFinance();
+                updateStats();
+                document.getElementById('financeCount').textContent = financeData.length + ' transaksi';
+            });
+
+            // Load Absensi
+            database.ref('absensi').on('value', function(snapshot) {
+                const data = snapshot.val();
+                absenData = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+                absenData.sort((a, b) => (b.tanggal || '').localeCompare(a.tanggal || ''));
+                renderAbsensi();
+                updateStats();
+                document.getElementById('absenCount').textContent = absenData.length + ' catatan';
             });
         }
 
         // ============================================================
-        // 📋 RENDER TABEL
+        // 5. RENDER SISWA
         // ============================================================
-        function renderTable() {
+        function renderSiswa() {
             const tbody = document.getElementById('siswaTableBody');
 
             if (!siswaData || siswaData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">
-                    📭 Belum ada siswa
-                </td></tr>`;
-                updateStats();
+                tbody.innerHTML =
+                    `<tr><td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">📭 Belum ada siswa</td></tr>`;
                 return;
             }
 
             let html = '';
-            let totalTugas = 0;
-
             siswaData.forEach((siswa, index) => {
-                let statusBadge = `<span class="badge">${siswa.status || 'Aktif'}</span>`;
-                if (siswa.status === 'Lunas') {
-                    statusBadge = `<span class="badge badge-lunas">✅ ${siswa.status}</span>`;
-                } else if (siswa.status === 'Tugas Terlambat') {
-                    statusBadge = `<span class="badge badge-terlambat">⚠️ ${siswa.status}</span>`;
-                }
-
-                if (siswa.status === 'Aktif' || siswa.status === 'Lunas') totalTugas++;
+                let badge = `<span class="badge badge-aktif">${siswa.status || 'Aktif'}</span>`;
+                if (siswa.status === 'Lunas') badge = `<span class="badge badge-lunas">✅ ${siswa.status}</span>`;
+                else if (siswa.status === 'Tugas Terlambat') badge =
+                    `<span class="badge badge-terlambat">⚠️ ${siswa.status}</span>`;
 
                 html += `
                     <tr>
@@ -868,38 +1168,285 @@
                         <td><strong>${escapeHtml(siswa.nama)}</strong></td>
                         <td>${escapeHtml(siswa.kelas)}</td>
                         <td>${escapeHtml(siswa.mapel)}</td>
-                        <td>${statusBadge}</td>
+                        <td>${badge}</td>
                         <td>
-                            <button class="btn-edit" onclick="bukaEdit('${siswa.id}')" title="Edit">✏️</button>
-                            <button class="btn-hapus" onclick="hapusSiswa('${siswa.id}')" title="Hapus">🗑️</button>
+                            <button class="btn-edit" onclick="bukaEdit('${siswa.id}')">✏️</button>
+                            <button class="btn-hapus" onclick="hapusSiswa('${siswa.id}')">🗑️</button>
                         </td>
                     </tr>
                 `;
             });
 
             tbody.innerHTML = html;
-            updateStats(totalTugas);
         }
 
         // ============================================================
-        // 📊 UPDATE STATISTIK
+        // 6. RENDER FINANCE
         // ============================================================
-        function updateStats(totalTugas) {
+        function renderFinance() {
+            const tbody = document.getElementById('financeTableBody');
+
+            if (!financeData || financeData.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="7" style="text-align:center;padding:30px;color:#94a3b8;">📭 Belum ada transaksi</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            financeData.forEach((item, index) => {
+                const nominal = parseInt(item.nominal) || 0;
+                total += nominal;
+
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${escapeHtml(item.siswa)}</strong></td>
+                        <td>${escapeHtml(item.bulan)}</td>
+                        <td>${escapeHtml(item.tahun)}</td>
+                        <td>Rp ${formatRupiah(nominal)}</td>
+                        <td>${formatTanggal(item.tanggal)}</td>
+                        <td>
+                            <button class="btn-hapus" onclick="hapusPembayaran('${item.id}')">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Total Row
+            html += `
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right;"><strong>TOTAL</strong></td>
+                    <td><strong>Rp ${formatRupiah(total)}</strong></td>
+                    <td colspan="2"></td>
+                </tr>
+            `;
+
+            tbody.innerHTML = html;
+            document.getElementById('totalPemasukan').textContent = 'Rp ' + formatRupiah(total);
+        }
+
+        // ============================================================
+        // 7. RENDER ABSENSI
+        // ============================================================
+        function renderAbsensi() {
+            const tbody = document.getElementById('absenTableBody');
+            const tanggalFilter = document.getElementById('absenTanggal').value;
+
+            let filtered = absenData;
+            if (tanggalFilter) {
+                filtered = absenData.filter(item => item.tanggal === tanggalFilter);
+            }
+
+            if (!filtered || filtered.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">📭 Belum ada data absensi</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach((item, index) => {
+                let badge = `<span class="badge badge-hadir">✅ ${item.status}</span>`;
+                if (item.status === 'Izin') badge = `<span class="badge badge-izin">📝 ${item.status}</span>`;
+                else if (item.status === 'Sakit') badge = `<span class="badge badge-sakit">🤒 ${item.status}</span>`;
+                else if (item.status === 'Alpa') badge = `<span class="badge badge-alpa">❌ ${item.status}</span>`;
+
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${escapeHtml(item.siswa)}</strong></td>
+                        <td>${badge}</td>
+                        <td>${escapeHtml(item.keterangan || '-')}</td>
+                        <td>${formatTanggal(item.tanggal)}</td>
+                        <td>
+                            <button class="btn-hapus" onclick="hapusAbsensi('${item.id}')">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // Update total hadir hari ini
+            const hadirHariIni = filtered.filter(item =>
+                item.status === 'Hadir' && item.tanggal === new Date().toISOString().split('T')[0]
+            ).length;
+            document.getElementById('totalHadir').textContent = hadirHariIni;
+        }
+
+        // ============================================================
+        // 8. UPDATE STATS
+        // ============================================================
+        function updateStats() {
             document.getElementById('totalSiswa').textContent = siswaData.length || 0;
 
-            if (totalTugas !== undefined) {
-                document.getElementById('totalTugas').textContent = totalTugas;
-            } else {
-                let count = 0;
-                siswaData.forEach(s => {
-                    if (s.status === 'Aktif' || s.status === 'Lunas') count++;
-                });
-                document.getElementById('totalTugas').textContent = count;
-            }
+            // Total pemasukan dari finance
+            let total = 0;
+            financeData.forEach(item => { total += parseInt(item.nominal) || 0; });
+            document.getElementById('totalPemasukan').textContent = 'Rp ' + formatRupiah(total);
+
+            // Total hadir hari ini
+            const today = new Date().toISOString().split('T')[0];
+            const hadirHariIni = absenData.filter(item =>
+                item.status === 'Hadir' && item.tanggal === today
+            ).length;
+            document.getElementById('totalHadir').textContent = hadirHariIni;
         }
 
         // ============================================================
-        // ➕ TAMBAH SISWA
+        // 9. UPDATE FINANCE DROPDOWN
+        // ============================================================
+        function updateFinanceSiswaDropdown() {
+            const select = document.getElementById('financeSiswa');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">Pilih Siswa</option>';
+            siswaData.forEach(s => {
+                select.innerHTML += `<option value="${escapeHtml(s.nama)}">${escapeHtml(s.nama)}</option>`;
+            });
+            if (currentVal) select.value = currentVal;
+        }
+
+        // ============================================================
+        // 10. TAMBAH PEMBAYARAN (FINANCE)
+        // ============================================================
+        function tambahPembayaran() {
+            if (isSaving) return;
+
+            const siswa = document.getElementById('financeSiswa').value;
+            const nominal = document.getElementById('financeNominal').value.trim();
+            const bulan = document.getElementById('financeBulan').value;
+            const tahun = document.getElementById('financeTahun').value;
+
+            if (!siswa || !nominal) {
+                showToast('⚠️ Pilih siswa dan isi nominal!', 'error');
+                return;
+            }
+
+            if (isNaN(nominal) || parseInt(nominal) <= 0) {
+                showToast('⚠️ Nominal harus angka positif!', 'error');
+                return;
+            }
+
+            isSaving = true;
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Menyimpan...';
+
+            database.ref('finance').push({
+                siswa: siswa,
+                nominal: parseInt(nominal),
+                bulan: bulan,
+                tahun: tahun,
+                tanggal: new Date().toISOString().split('T')[0],
+                createdAt: new Date().toISOString()
+            }).then(() => {
+                showToast(`✅ Pembayaran ${siswa} berhasil!`, 'success');
+                document.getElementById('financeNominal').value = '';
+                isSaving = false;
+                btn.disabled = false;
+                btn.textContent = '➕ Tambah';
+            }).catch(() => {
+                showToast('❌ Gagal menambahkan!', 'error');
+                isSaving = false;
+                btn.disabled = false;
+                btn.textContent = '➕ Tambah';
+            });
+        }
+
+        // ============================================================
+        // 11. HAPUS PEMBAYARAN
+        // ============================================================
+        function hapusPembayaran(id) {
+            if (!confirm('Yakin hapus transaksi ini?')) return;
+            database.ref('finance/' + id).remove().then(() => {
+                showToast('🗑️ Transaksi dihapus!', 'success');
+            }).catch(() => {
+                showToast('❌ Gagal menghapus!', 'error');
+            });
+        }
+
+        // ============================================================
+        // 12. ABSENSI - BUKA MODAL
+        // ============================================================
+        function bukaAbsensi(id) {
+            const siswa = siswaData.find(s => s.id === id);
+            if (!siswa) return;
+
+            absenSiswaId = id;
+            document.getElementById('absenSiswaId').value = id;
+            document.getElementById('absenSiswaNama').textContent = siswa.nama;
+            document.getElementById('absenTanggalDisplay').textContent = new Date().toISOString().split('T')[0];
+            document.getElementById('absenStatus').value = 'Hadir';
+            document.getElementById('absenKeterangan').value = '';
+            document.getElementById('absenModal').style.display = 'flex';
+        }
+
+        // ============================================================
+        // 13. SIMPAN ABSENSI
+        // ============================================================
+        function simpanAbsensi() {
+            if (isSaving) return;
+
+            const id = document.getElementById('absenSiswaId').value;
+            const siswa = siswaData.find(s => s.id === id);
+            const status = document.getElementById('absenStatus').value;
+            const keterangan = document.getElementById('absenKeterangan').value.trim();
+            const tanggal = new Date().toISOString().split('T')[0];
+
+            if (!siswa) {
+                showToast('❌ Data siswa tidak ditemukan!', 'error');
+                return;
+            }
+
+            isSaving = true;
+            const btn = document.querySelector('#absenModal .btn-success');
+            btn.disabled = true;
+            btn.textContent = '⏳ Menyimpan...';
+
+            database.ref('absensi').push({
+                siswaId: id,
+                siswa: siswa.nama,
+                status: status,
+                keterangan: keterangan,
+                tanggal: tanggal,
+                createdAt: new Date().toISOString()
+            }).then(() => {
+                showToast(`✅ Absensi ${siswa.nama} - ${status}`, 'success');
+                tutupModalAbsen();
+                isSaving = false;
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan';
+            }).catch(() => {
+                showToast('❌ Gagal menyimpan absensi!', 'error');
+                isSaving = false;
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan';
+            });
+        }
+
+        // ============================================================
+        // 14. HAPUS ABSENSI
+        // ============================================================
+        function hapusAbsensi(id) {
+            if (!confirm('Yakin hapus data absensi ini?')) return;
+            database.ref('absensi/' + id).remove().then(() => {
+                showToast('🗑️ Absensi dihapus!', 'success');
+            }).catch(() => {
+                showToast('❌ Gagal menghapus!', 'error');
+            });
+        }
+
+        // ============================================================
+        // 15. LOAD ABSENSI (Filter Tanggal)
+        // ============================================================
+        function loadAbsensi() {
+            renderAbsensi();
+            showToast('✅ Data absensi dimuat!', 'success');
+        }
+
+        // ============================================================
+        // 16. TAMBAH SISWA
         // ============================================================
         function tambahSiswa() {
             if (isSaving) return;
@@ -919,24 +1466,20 @@
             btn.disabled = true;
             btn.textContent = '⏳ Menyimpan...';
 
-            const newSiswa = {
-                nama: nama,
-                kelas: kelas,
-                mapel: mapel,
-                status: status,
+            database.ref('siswa').push({
+                nama,
+                kelas,
+                mapel,
+                status,
                 createdAt: new Date().toISOString()
-            };
-
-            const siswaRef = database.ref('siswa');
-            siswaRef.push(newSiswa).then(() => {
+            }).then(() => {
                 showToast(`✅ Siswa "${nama}" berhasil ditambahkan!`, 'success');
                 document.getElementById('inputNama').value = '';
                 document.getElementById('inputKelas').value = '';
                 isSaving = false;
                 btn.disabled = false;
                 btn.textContent = '➕ Tambah';
-            }).catch((error) => {
-                console.error('Error:', error);
+            }).catch(() => {
                 showToast('❌ Gagal menambahkan siswa!', 'error');
                 isSaving = false;
                 btn.disabled = false;
@@ -945,7 +1488,7 @@
         }
 
         // ============================================================
-        // ✏️ EDIT SISWA
+        // 17. EDIT SISWA
         // ============================================================
         function bukaEdit(id) {
             const siswa = siswaData.find(s => s.id === id);
@@ -977,23 +1520,19 @@
             btn.disabled = true;
             btn.textContent = '⏳ Menyimpan...';
 
-            const updates = {
-                nama: nama,
-                kelas: kelas,
+            database.ref('siswa/' + id).update({
+                nama,
+                kelas,
                 mapel: document.getElementById('editMapel').value,
                 status: document.getElementById('editStatus').value,
                 updatedAt: new Date().toISOString()
-            };
-
-            const siswaRef = database.ref('siswa/' + id);
-            siswaRef.update(updates).then(() => {
+            }).then(() => {
                 showToast('✅ Data berhasil diupdate!', 'success');
                 tutupModal();
                 isSaving = false;
                 btn.disabled = false;
                 btn.textContent = '💾 Simpan';
-            }).catch((error) => {
-                console.error('Error:', error);
+            }).catch(() => {
                 showToast('❌ Gagal mengupdate data!', 'error');
                 isSaving = false;
                 btn.disabled = false;
@@ -1008,30 +1547,103 @@
         }
 
         // ============================================================
-        // 🗑️ HAPUS SISWA
+        // 18. HAPUS SISWA
         // ============================================================
         function hapusSiswa(id) {
             const siswa = siswaData.find(s => s.id === id);
             if (!siswa) return;
-
             if (!confirm(`Yakin hapus siswa "${siswa.nama}"?`)) return;
-
             if (isSaving) return;
-            isSaving = true;
 
-            const siswaRef = database.ref('siswa/' + id);
-            siswaRef.remove().then(() => {
+            isSaving = true;
+            database.ref('siswa/' + id).remove().then(() => {
                 showToast(`🗑️ Siswa "${siswa.nama}" berhasil dihapus!`, 'success');
                 isSaving = false;
-            }).catch((error) => {
-                console.error('Error:', error);
+            }).catch(() => {
                 showToast('❌ Gagal menghapus siswa!', 'error');
                 isSaving = false;
             });
         }
 
         // ============================================================
-        // 🔐 LOGIN
+        // 19. TUTUP MODAL ABSEN
+        // ============================================================
+        function tutupModalAbsen() {
+            document.getElementById('absenModal').style.display = 'none';
+            document.querySelector('#absenModal .btn-success').disabled = false;
+            document.querySelector('#absenModal .btn-success').textContent = '💾 Simpan';
+        }
+
+        // ============================================================
+        // 20. EXPORT EXCEL (Semua Data)
+        // ============================================================
+        function exportExcel() {
+            if (!siswaData || siswaData.length === 0) {
+                showToast('⚠️ Tidak ada data untuk diexport!', 'error');
+                return;
+            }
+
+            try {
+                const data = siswaData.map((s, i) => ({
+                    'No': i + 1,
+                    'Nama': s.nama || '',
+                    'Kelas': s.kelas || '',
+                    'Mapel': s.mapel || '',
+                    'Status': s.status || 'Aktif'
+                }));
+
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.json_to_sheet(data);
+                XLSX.utils.book_append_sheet(wb, ws, 'Siswa');
+                XLSX.writeFile(wb, `Data_Siswa_Jarimania_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+                showToast('✅ Export Excel berhasil!', 'success');
+            } catch (e) {
+                showToast('❌ Gagal export Excel!', 'error');
+                console.error(e);
+            }
+        }
+
+        // ============================================================
+        // 21. EXPORT EXCEL (Absensi)
+        // ============================================================
+        function exportAbsensiExcel() {
+            const tanggal = document.getElementById('absenTanggal').value;
+            let filtered = absenData;
+
+            if (tanggal) {
+                filtered = absenData.filter(item => item.tanggal === tanggal);
+            }
+
+            if (!filtered || filtered.length === 0) {
+                showToast('⚠️ Tidak ada data absensi untuk diexport!', 'error');
+                return;
+            }
+
+            try {
+                const data = filtered.map((item, i) => ({
+                    'No': i + 1,
+                    'Siswa': item.siswa || '',
+                    'Status': item.status || '',
+                    'Keterangan': item.keterangan || '-',
+                    'Tanggal': item.tanggal || ''
+                }));
+
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.json_to_sheet(data);
+                XLSX.utils.book_append_sheet(wb, ws, 'Absensi');
+                XLSX.writeFile(wb,
+                `Absensi_Jarimania_${tanggal || new Date().toISOString().split('T')[0]}.xlsx`);
+
+                showToast('✅ Export Excel Absensi berhasil!', 'success');
+            } catch (e) {
+                showToast('❌ Gagal export Excel!', 'error');
+                console.error(e);
+            }
+        }
+
+        // ============================================================
+        // 22. LOGIN
         // ============================================================
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1047,8 +1659,11 @@
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
                 sessionStorage.setItem('jarimania_logged_in', 'true');
-
                 document.getElementById('loadingIndicator').style.display = 'block';
+
+                // Set tanggal default untuk absensi
+                document.getElementById('absenTanggal').value = new Date().toISOString().split('T')[0];
+
                 loadData();
                 showToast('👋 Selamat datang!', 'success');
                 btn.disabled = false;
@@ -1061,10 +1676,12 @@
         });
 
         // ============================================================
-        // 🚪 LOGOUT
+        // 23. LOGOUT
         // ============================================================
         function logout() {
             database.ref('siswa').off();
+            database.ref('finance').off();
+            database.ref('absensi').off();
             sessionStorage.removeItem('jarimania_logged_in');
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('loginSection').style.display = 'block';
@@ -1075,19 +1692,33 @@
         }
 
         // ============================================================
-        // 🔄 CEK SESSION
+        // 24. SESSION CHECK
         // ============================================================
         window.onload = function() {
             if (sessionStorage.getItem('jarimania_logged_in') === 'true') {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
                 document.getElementById('loadingIndicator').style.display = 'block';
+                document.getElementById('absenTanggal').value = new Date().toISOString().split('T')[0];
                 loadData();
             }
         };
 
         // ============================================================
-        // 🛠️ UTILITY
+        // 25. TAB MENU
+        // ============================================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ============================================================
+        // 26. UTILITY
         // ============================================================
         function escapeHtml(text) {
             if (!text) return '';
@@ -1096,9 +1727,19 @@
             return div.innerHTML;
         }
 
-        // ============================================================
-        // 💬 TOAST NOTIFICATION
-        // ============================================================
+        function formatRupiah(angka) {
+            return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function formatTanggal(tgl) {
+            if (!tgl) return '-';
+            const parts = tgl.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return tgl;
+        }
+
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -1110,7 +1751,7 @@
         }
 
         // ============================================================
-        // ⌨️ KEYBOARD SHORTCUT
+        // 27. KEYBOARD SHORTCUT
         // ============================================================
         document.getElementById('inputNama').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -1118,6 +1759,7 @@
                 document.getElementById('inputKelas').focus();
             }
         });
+
         document.getElementById('inputKelas').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -1129,10 +1771,12 @@
             if (e.target === this) tutupModal();
         });
 
-        console.log('🚀 Les Jarimania siap!');
-        console.log('☁️ Database: Firebase Realtime Database');
-        console.log('📱 Bisa diakses dari HP manapun!');
-        console.log(`📁 Hosting: GitHub Pages`);
+        document.getElementById('absenModal').addEventListener('click', function(e) {
+            if (e.target === this) tutupModalAbsen();
+        });
+
+        console.log('🚀 Les Jarimania v2.0 siap!');
+        console.log('💰 Finance, ✅ Absensi, 📊 Export Excel');
     </script>
 
 </body>

@@ -20,7 +20,7 @@
 ## 📸 Preview
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x450/4f46e5/ffffff?text=Les+Jarimania+Dashboard" alt="Dashboard Preview" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+  <img src="https://i.ibb.co/XZkqnjB7/1.png" alt="Dashboard Preview" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
   <p><em>Tampilan Dashboard Les Jarimania</em></p>
 </div>
 

@@ -142,11 +142,10 @@
             transform: scale(0.98);
         }
 
-        .btn-small {
-            width: auto;
-            padding: 8px 20px;
-            display: inline-block;
-            margin: 5px;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         .login-error {
@@ -542,7 +541,6 @@
             padding-top: 20px;
         }
 
-        /* Toast notification */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -577,7 +575,6 @@
             background: #2563eb;
         }
 
-        /* Loading */
         .loading-overlay {
             display: none;
             text-align: center;
@@ -602,17 +599,6 @@
             100% {
                 transform: rotate(360deg);
             }
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* hidden class */
-        .hidden {
-            display: none !important;
         }
     </style>
 </head>
@@ -781,16 +767,16 @@
     ============================================================ -->
     <script>
         // ============================================================
-        // 🔥 KONFIGURASI FIREBASE (GANTI PUNYA KAMU!)
+        // 🔥 KONFIGURASI FIREBASE - SUDAH DIISI!
         // ============================================================
         const firebaseConfig = {
-            apiKey: "AIzaSyABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            authDomain: "jarimania-12345.firebaseapp.com",
-            databaseURL: "https://jarimania-12345-default-rtdb.firebaseio.com",
-            projectId: "jarimania-12345",
-            storageBucket: "jarimania-12345.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            apiKey: "AIzaSyDTR-MimKKkqluysGZl8ll5IJRE-AbaNLU",
+            authDomain: "jarimania.firebaseapp.com",
+            databaseURL: "https://jarimania-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "jarimania",
+            storageBucket: "jarimania.firebasestorage.app",
+            messagingSenderId: "731016172554",
+            appId: "1:731016172554:web:ef5b0206b7c1ddd8347bf3"
         };
 
         // Inisialisasi Firebase
@@ -1144,6 +1130,9 @@
         });
 
         console.log('🚀 Les Jarimania siap!');
+        console.log('☁️ Database: Firebase Realtime Database');
+        console.log('📱 Bisa diakses dari HP manapun!');
+        console.log(`📁 Hosting: GitHub Pages`);
     </script>
 
 </body>
